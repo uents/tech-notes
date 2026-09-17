@@ -69,7 +69,7 @@
 ## 手を動かす
 
 - CleanRL の `ppo.py` で、advantage と GAE を計算している箇所を読み、この章の式と対応づける
-- 24位の設定（`ppo/config.json`）の `gae_lambda`、`entropy_coefficient`、`value_coefficient` を、この章の言葉で説明してみる
+- 24位の設定（`src/agents/dragapult/ppo/config.json`）の `gae_lambda`、`entropy_coefficient`、`value_coefficient` を、この章の言葉で説明してみる
 
 ## メモ
 

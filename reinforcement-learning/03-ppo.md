@@ -45,7 +45,8 @@
 
 - 収集 → 学習データの作成 → 更新、のサイクル
 - 同じデータを何周するか（エポック）とミニバッチ
-- KL を見ながら学習率を決める／更新を止める
+- KL を見ながら学習率を決める（24位は `calibrate.py` で、検証用に取り分けた判断での KL が目標に近い学習率を選ぶ）
+- KL が大きくなったら、そのサイクルの更新を途中で止める（一般的な PPO の早期停止。24位の `train.py` にはない）
 - 勾配の大きさの上限（24位は0.5）
 
 <!-- ここに自分の言葉でまとめる -->
@@ -92,9 +93,9 @@
 
 ## 手を動かす
 
-- `ppo/scripts/calibrate.py` を読み、学習率を KL でどう選んでいるかを追う
+- 24位の `src/agents/dragapult/ppo/scripts/calibrate.py` を読み、学習率を KL でどう選んでいるかを追う
 - ptcg-abc の `docs/research/reproduce/24-population-rl.md` の段階4で、1サイクルの更新回数と KL の推移を確かめる
-- CleanRL の `ppo.py` と 24位の `ppo/train.py` を並べ、同じ処理がどこにあるかを対応づける
+- CleanRL の `ppo.py` と 24位の `src/agents/dragapult/ppo/train.py` を並べ、同じ処理がどこにあるかを対応づける
 
 ## メモ
 

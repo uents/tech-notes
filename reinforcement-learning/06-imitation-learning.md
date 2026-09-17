@@ -71,7 +71,7 @@
 ## 手を動かす
 
 - ptcg-abc の `docs/research/reproduce/24-population-rl.md` の段階2〜3を読み、GBDT の一致率と、元のルール方策への勝率を確かめる
-- 24位の `transformer/train.py` の損失の計算を読み、上の3つの項がどこにあるかを見る
+- 24位の `src/agents/dragapult/transformer/train.py` の損失の計算を読み、上の3つの項がどこにあるかを見る
 
 ## メモ
 
