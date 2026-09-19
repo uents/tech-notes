@@ -23,9 +23,9 @@
 | | |  $A(s)$ | 状態 $s$ で選択可能な行動の集合 |
 | 報酬 | reward | $r$ | エージェントの目的や目標を定量化したもの |
 | | |  $R$ | 報酬の全体集合 |
-| 遷移確率 | transition probability | $p(s'\|s,a)$ | 状態 $s$ で行動 $a$ を取ったときに次の状態 $s'$ になる確率 |
+| 遷移確率 | transition probability | $p(s' \mid s,a)$ | 状態 $s$ で行動 $a$ を取ったときに次の状態 $s'$ になる確率 |
 | 割引率 | discount rate | $\gamma$ | 将来獲得する報酬の現在価値を決める係数 |
-| 方策 | policy | $\pi(a\|s)$ | 状態 $s$ で行動 $a$ を選ぶ確率 |
+| 方策 | policy | $\pi(a \mid s)$ | 状態 $s$ で行動 $a$ を選ぶ確率 |
 | エピソード | episode | - | 終端状態に達するまでの一連の状態・行動・報酬の列 |
 | 終端状態 | terminal state | - | エピソードが終了する状態 |
 
@@ -52,21 +52,21 @@ stateDiagram-v2
 MDP のダイナミクス（dynamics : 環境の振る舞いを決定する確率的なルール）は次のように表される。
 
 ```math
-p(s',r|s,a) = \Pr \{ S_t = s', R_t = r | S_{t-1} = s, A_{t-1} = a \}
+p(s',r \mid s,a) = \Pr \{ S_t = s', R_t = r \mid S_{t-1} = s, A_{t-1} = a \}
 ```
 
 このとき、
 
 ```math
-\sum_{s' \in S} \sum_{r \in R} p(s',r|s,a) = 1 \qquad \forall s \in S, a \in A(s)
+\sum_{s' \in S} \sum_{r \in R} p(s',r \mid s,a) = 1 \qquad \forall s \in S, a \in A(s)
 ```
 
 マルコフ決定過程では、環境のダイナミクスの特徴はすべて $p$ で与えられる確率によって決定される。すなわち、次の状態や報酬の分布は、直前の状態と行動のみに依存し、それより過去のすべての状態や行動には全く依存しない。
 
-さらに、状態 $s'$ への遷移確率（transition probability）を $p(s'|s,a)$ と表すと、
+さらに、状態 $s'$ への遷移確率（transition probability）を $p(s' \mid s,a)$ と表すと、
 
 ```math
-p(s'|s,a) = \sum_{r \in R} p(s',r|s,a)
+p(s' \mid s,a) = \sum_{r \in R} p(s',r \mid s,a)
 ```
 
 となり、報酬 $r$ を考慮しない場合の遷移確率が得られる。これにより、状態の遷移だけに注目した解析や方策の評価が可能になる。
@@ -74,13 +74,13 @@ p(s'|s,a) = \sum_{r \in R} p(s',r|s,a)
 また、期待報酬 $r$ は、直前の状態 $s$ で行動 $a$ を取った場合に、次のように表され、
 
 ```math
-r(s,a) = \sum_{r \in R} r \sum_{s' \in S} p(s',r|s,a)
+r(s,a) = \sum_{r \in R} r \sum_{s' \in S} p(s',r \mid s,a)
 ```
 
 さらに状態 $s'$ への遷移を考慮した期待報酬 $r$ は、次のように表される。
 
 ```math
-r(s,a,s') = \sum_{r \in R} r \frac{p(s',r|s,a)}{p(s'|s,a)}
+r(s,a,s') = \sum_{r \in R} r \frac{p(s',r \mid s,a)}{p(s' \mid s,a)}
 ```
   
 これにより、状態の遷移を考慮せずに、特定の状態 $s$ で行動 $a$ を取ったときに得られる報酬の分布を解析することや、さらに状態 $s'$ への遷移を考慮した期待報酬が解析可能となる。
