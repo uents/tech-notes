@@ -454,6 +454,45 @@ q_{\pi}(s, a) &= \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_{\pi}(s')\ri
 
 <!-- ベルマン最適方程式。max が入ると何が変わるか。最適方策が決定的でよい理由 -->
 
+最適状態価値関数 $v_*(s)$ は、すべての方策の中で最大の状態価値を与える関数である。
+
+```math
+v_*(s) = \max_{\pi} v_{\pi}(s) = \max_{a} q_*(s, a)
+```
+
+最適行動価値関数 $q_*(s, a)$ は、すべての方策の中で最大の行動価値を与える関数である。
+
+```math
+q_*(s, a) = \max_{\pi} q_{\pi}(s, a)
+```
+
+さらに、ベルマン最適方程式を用いると、最適状態価値関数 $v_*(s)$ は次のように表される。これは、最適な方策に従った場合の状態価値が、その状態での最適な行動を取ることで得られる期待収益に等しいことを意味する。
+
+```math
+\begin{aligned}
+v_*(s) &= \max_{\pi} v_{\pi}(s) \\
+&= \max_{a} q_{\pi_*}(s, a) \\
+&= \max_{a} \mathbb{E}_{\pi_*} \left[ G_t \mid S_t = s, A_t = a \right] \\
+&= \max_{a} \mathbb{E}_{\pi_*} \left[ R_{t+1} + \gamma G_{t+1} \mid S_t = s, A_t = a \right] \\
+&= \max_{a} \mathbb{E}_{\pi_*} \left[ R_{t+1} + \gamma v_*(S_{t+1}) \mid S_t = s, A_t = a \right] \\
+& = \max_{a} \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_*(s')\right]
+\end{aligned}
+```
+
+つまり、 $v_*(s)$ は $\max_{a} \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_*(s')\right]$ と、一手先の展開によって最適な価値が得られることを意味する。
+
+また、最適行動価値関数 $q_*(s, a)$ は次のように表される。
+
+```math
+\begin{aligned}
+q_*(s, a) &= \max_{\pi} q_{\pi}(s, a) \\
+&= \mathbb{E}_{\pi_*} \left[ R_{t+1} + \gamma \max_{a'} q_*(S_{t+1}, a') \mid S_t = s, A_t = a \right] \\
+&= \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma \max_{a'} q_*(s', a') \right]
+\end{aligned}
+```
+
+これは $q_*(s, a)$ が、 $\arg\max_{a} q_*(s, a)$ に従うことで最適な行動を選択できることを意味する。（最適方策は決定的でよいことを示している）
+
 ### 動的計画法との関係
 
 <!-- 方策評価と方策改善、方策反復と価値反復。p が分かっている前提が必要なこと（4節はこの前提を外す） -->
