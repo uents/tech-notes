@@ -497,6 +497,27 @@ q_*(s, a) &= \max_{\pi} q_{\pi}(s, a) \\
 
 <!-- 方策評価と方策改善、方策反復と価値反復。p が分かっている前提が必要なこと（4節はこの前提を外す） -->
 
+動的計画法（Dynamic Programming, DP）は、環境のモデル $p(s', r \mid s, a)$ が既知である場合に、価値関数を効率的に計算する手法である。具体的には、ベルマン方程式を反復的に解くことで、最適価値関数や最適方策を求めることができる。
+
+方策評価（Policy Evaluation）は、方策 $\pi$ に従った状態価値 $v_\pi$ を反復的に計算する手法である。具体的には、次のように更新する。
+
+```math
+v_{k+1}(s) \gets \sum_{a} \pi(a \mid s) \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_k(s')\right]
+```
+
+方策改善（Policy Improvement）は、現在の方策 $\pi$ に従った場合の行動価値 $q_\pi$ を用いて、方策を反復的に改善する手法である。具体的には、次のように更新する。
+
+```math
+\begin{aligned}
+\pi'(s) &\gets \arg\max_{a} q_\pi(s, a) \\
+&= \arg\max_{a} \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_\pi(s')\right]
+\end{aligned}
+```
+
+方策評価と方策改善を交互に繰り返すことを方策反復（Policy Iteration）と呼び、評価を1回で打ち切る形が価値反復（Value Iteration）にあたる。この繰り返し構造は、以降の手法にも共通する。
+
+ただし、環境のモデル $p(s', r \mid s, a)$ が既知でない場合は動的計画法は適用できない。その場合は、モデルフリーの手法を用いる必要があり、モンテカルロ法や TD 学習がその代表例である。
+
 ## 4. モンテカルロ法と TD 学習
 
 > [!NOTE]
