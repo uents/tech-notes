@@ -212,7 +212,7 @@ G_t = 1 + 1 + \cdots + 1 = \sum_{k=0}^{T-t-1} 1 = T-t
         - 状態 $s$ で行動 $a$ を取ったとき、次の状態 $s'$ になり報酬 $r$ を得る確率分布
         - 遷移確率 $p(s' \mid s, a)$ と報酬関数 $r(s, a)$ はこの確率分布から導かれる
 - 目的
-    - 期待収益 $\mathbb{E}[G_t]$ : エージェントが最大化しようとする累積報酬の期待値
+    - 期待収益 $\mathbb{E}_{\pi}[G_t]$ : エージェントが最大化しようとする累積報酬の期待値
     - 割引率 $\gamma$ : 将来の報酬をどの程度重視するかを決定するパラメータ
 - エージェント
     - 方策 $\pi(a \mid s)$ : 状態 $s$ で行動 $a$ を選択するかの確率分布
@@ -231,7 +231,7 @@ G_t = 1 + 1 + \cdots + 1 = \sum_{k=0}^{T-t-1} 1 = T-t
         - 報酬関数 $r(s, a)$ : 勝利で 1、敗北で -1、その他の行動で 0
         - 遷移確率 $p(s' \mid s, a)$ : プレイヤーが行動 $a$ を取ったときに次の状態 $s'$ になる確率
 - 目的
-    - 期待収益 $\mathbb{E}[G_t]$ : プレイヤーが勝率を最大化するための期待値
+    - 期待収益 $\mathbb{E}_{\pi}[G_t]$ : プレイヤーが勝率を最大化するための期待値
     - 割引率 $\gamma$ : 将来の報酬をどの程度重視するかを決定するパラメータ
 - エージェント
     - 方策 $\pi(a \mid s)$ : ゲームの盤面 $s$ でプレイヤーが合法手のうち、どの行動 $a$ を選択するかの確率分布
@@ -338,21 +338,117 @@ b_t(s) = \Pr \{s_t = s \mid h_t\}
 > - ベルマン方程式（期待値の再帰）
 > - 最適方策と最適価値
 
-### 状態価値 V
+### 状態価値 $v_{\pi}(s)$
 
 <!-- 方策 π のもとでの期待収益。1節の G_t とどうつながるか -->
 
-### 行動価値 Q
+状態価値関数 $v_{\pi}(s)$ は、方策 $\pi$ に従って行動した場合に、状態 $s$ から得られる期待収益である。MDP の文脈では、 $v_{\pi}(s)$ は次のように厳密に定義される。
 
-<!-- 状態 s で行動 a を取り、その後は π に従う場合の期待収益。V との違いは何か -->
+```math
+\begin{aligned}
+v_{\pi}(s) &= \mathbb{E}_{\pi} \left[ G_t \mid S_t = s \right] \\
+&= \mathbb{E}_{\pi} \left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} \mid S_t = s \right] \\
+\end{aligned}
+```
 
-### V と Q の関係
+この関数 $v_{\pi}(s)$ は、方策 $\pi$ に従った場合の状態 $s$ の価値を表すものであり、 **方策 $\pi$ における状態価値関数（state-value function）** と呼ばれる。
+
+### 行動価値 $q_{\pi}(s, a)$
+
+<!-- 状態 $s$ で行動 $a$ を取り、その後は $\pi$ に従う場合の期待収益。$v_{\pi}$ との違いは何か -->
+
+方策 $\pi$ の下で状態 $s$ で行動 $a$ を取る価値を、行動価値関数 $q_{\pi}(s, a)$ として定義する。
+
+```math
+\begin{aligned}
+q_{\pi}(s, a) &= \mathbb{E}_{\pi} \left[ G_t \mid S_t = s, A_t = a \right] \\
+&= \mathbb{E}_{\pi} \left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} \mid S_t = s, A_t = a \right] 
+\end{aligned}
+```
+
+$q_{\pi}(s, a)$ は、 **方策 $\pi$ における行動価値関数（action-value function）** と呼ばれる。
+
+### $v_{\pi}$ と $q_{\pi}$ の関係
 
 <!-- π で平均すると V になること。p と r を使うと Q を V で書けること -->
 
-### ベルマン期待方程式
+状態価値関数 $v_{\pi}(s)$ は、方策 $\pi$ に従った場合の状態 $s$ の価値であり、行動価値関数 $q_{\pi}(s, a)$ は、状態 $s$ で行動 $a$ を取った場合の価値である。
+
+$v_{\pi}(s)$ は、状態 $s$ での行動価値関数 $q_{\pi}(s, a)$ の期待値として表される。
+
+```math
+v_{\pi}(s) = \sum_{a} \pi(a \mid s) q_{\pi}(s, a)
+```
+
+$q_{\pi}(s, a)$ は、状態 $s$ で行動 $a$ を取った場合の価値であり、その後の行動は方策 $\pi$ に従うことを考えると、次のように表される。
+
+```math
+q_{\pi}(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_{\pi}(s')\right]
+```
+
+### ベルマン方程式
 
 <!-- 1節の G_t = R_{t+1} + γG_{t+1} の期待値を取った形。何が再帰になっているか -->
+
+ベルマン方程式とは、状態価値関数や行動価値関数が、次の状態の価値に基づいて再帰的に表される関係式のことである。
+
+#### $v_{\pi}(s)$ に対するベルマン方程式
+
+状態価値関数 $v_{\pi}(s)$ はダイナミクス $p(s', r \mid s, a)$ を用いると、次のように展開できる。
+
+```math
+\begin{aligned}
+v_{\pi}(s) &= \mathbb{E}_{\pi}[G_t \mid S_t = s] \\
+&= \mathbb{E}_{\pi} \left[R_{t+1} + \gamma G_{t+1} \mid S_t = s\right] \\
+&= \mathbb{E}_{\pi} \left[ R_{t+1} \mid S_t = s \right] + \gamma \mathbb{E}_{\pi} \left[ G_{t+1} \mid S_t = s \right] \\
+\end{aligned}
+```
+
+ここで、右辺の第1項の $\mathbb{E}_{\pi}[\cdot]$ は、
+
+```math
+\begin{aligned}
+\mathbb{E}_{\pi} \left[ R_{t+1} \mid S_t = s \right] 
+&= \sum_{a} \pi(a \mid s) \sum_{s', r} p(s', r \mid s, a) \cdot r \\
+\end{aligned}
+```
+
+右辺の第2項の $\mathbb{E}_{\pi}[\cdot]$ は、次のように書ける。
+
+```math
+\begin{aligned}
+\mathbb{E}_{\pi} \left[ G_{t+1} \mid S_t = s \right] &= \sum_{s', r} \Pr\{S_{t+1} = s', R_{t+1} = r \mid S_t = s\} \cdot \mathbb{E}_{\pi}[G_{t+1} \mid S_t=s, S_{t+1} = s', R_{t+1} = r] \\
+&= \sum_{s', r} \Pr\{S_{t+1} = s', R_{t+1} = r \mid S_t = s\} \cdot \mathbb{E}_{\pi}[G_{t+1} \mid S_{t+1} = s'] \\
+&= \sum_{a} \pi(a \mid s) \sum_{s', r} p(s', r \mid s, a) \cdot v_{\pi}(s')
+\end{aligned}
+```
+
+> [!NOTE]
+> $\mathbb{E}_{\pi}[G_{t+1} \mid S_t = s, S_{t+1} = s', R_{t+1} = r] = \mathbb{E}_{\pi}[G_{t+1} \mid S_{t+1} = s']$ の理由は、マルコフ性によって、将来のリターンは次の状態 $S_{t+1}$ にのみ依存し、すなわち過去の状態 $S_t$ や報酬 $R_{t+1}$ には依存しないためであり、ここで期待値の条件を簡略化できるからである。
+
+変形した結果、状態価値関数 $v_{\pi}(s)$ に戻すと次のように書ける。
+
+```math
+\begin{aligned}
+v_{\pi}(s) &= \sum_{a} \pi(a \mid s) \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_{\pi}(s')\right] \\
+\end{aligned}
+```
+
+この式を **$v_{\pi}(s)$ に対するベルマン方程式（Bellman equation）** と呼ぶ。状態 $s$ の価値は、次の状態の価値で再帰的に表される。
+
+#### $q_{\pi}(s, a)$ に対するベルマン方程式
+
+行動価値関数 $q_{\pi}(s, a)$ は、状態 $s$ で行動 $a$ を取った場合の価値であり、その後の行動は方策 $\pi$ に従うことを考えると、次のように表される。
+
+```math
+\begin{aligned}
+q_{\pi}(s, a) &= \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma v_{\pi}(s')\right] \\
+&= \sum_{s', r} p(s', r \mid s, a) \left[r + \gamma \sum_{a'} \pi(a' \mid s') q_{\pi}(s', a') \right]
+\end{aligned}
+```
+
+この式を **$q_{\pi}(s, a)$ に対するベルマン方程式** と呼ぶ。状態 $s$ で行動 $a$ を取った場合の価値は、次の行動の価値で再帰的に表される。
+
 
 ### 最適価値と最適方策
 
